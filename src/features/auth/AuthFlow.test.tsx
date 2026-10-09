@@ -53,10 +53,12 @@ describe("Auth UI", () => {
     fireEvent.change(screen.getByLabelText("Email"), {
       target: { value: "invalid-email" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Войти" }));
+    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
 
-    expect(await screen.findByText("Введите корректный email.")).toBeTruthy();
-    expect(await screen.findByText("Введите пароль.")).toBeTruthy();
+    expect(
+      await screen.findByText("Enter a valid email address."),
+    ).toBeTruthy();
+    expect(await screen.findByText("Enter a password.")).toBeTruthy();
     expect(authMocks.login).not.toHaveBeenCalled();
   });
 
@@ -71,10 +73,10 @@ describe("Auth UI", () => {
     fireEvent.change(screen.getByLabelText("Email"), {
       target: { value: user.email },
     });
-    fireEvent.change(screen.getByLabelText("Пароль"), {
+    fireEvent.change(screen.getByLabelText("Password"), {
       target: { value: "SmartSender2026!" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Войти" }));
+    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
 
     expect(
       await screen.findByRole("heading", { name: "Webhooks" }),
@@ -96,10 +98,10 @@ describe("Auth UI", () => {
     fireEvent.change(screen.getByLabelText("Email"), {
       target: { value: user.email },
     });
-    fireEvent.change(screen.getByLabelText("Пароль"), {
+    fireEvent.change(screen.getByLabelText("Password"), {
       target: { value: "wrong-password" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Войти" }));
+    fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
 
     expect(
       await screen.findByText("The provided credentials are incorrect."),

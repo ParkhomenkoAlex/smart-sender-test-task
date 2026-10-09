@@ -79,7 +79,7 @@ export function WebhooksPage() {
           disabled={logoutMutation.isPending}
           onClick={handleLogout}
         >
-          {logoutMutation.isPending ? "Выходим…" : "Logout"}
+          {logoutMutation.isPending ? "Signing out…" : "Logout"}
         </button>
       </header>
 
@@ -93,20 +93,20 @@ export function WebhooksPage() {
 
       {webhooksQuery.isPending && (
         <p className="mt-6 text-sm text-slate-600" role="status">
-          Загружаем webhooks…
+          Loading webhooks…
         </p>
       )}
 
       {!webhooksQuery.isPending && webhooksQuery.isFetching && (
         <p className="mt-6 text-sm text-slate-600" role="status">
-          Ищем webhooks…
+          Searching webhooks…
         </p>
       )}
 
       {webhooksQuery.isError && (
         <section className="mt-6 rounded-md border border-red-200 bg-red-50 p-4">
           <p className="text-sm text-red-800" role="alert">
-            Не удалось загрузить webhooks. Попробуйте ещё раз.
+            Unable to load webhooks. Please try again.
           </p>
           <button
             className="mt-3 rounded-md border border-red-300 px-3 py-2 text-sm font-medium text-red-800 hover:bg-red-100"
@@ -262,7 +262,7 @@ function Pagination({
       aria-label="Pagination"
     >
       <p className="text-sm text-slate-600">
-        Страница {currentPage} из {lastPage}. Найдено: {total}.
+        Page {currentPage} of {lastPage}. Results: {total}.
       </p>
       <div className="flex gap-2">
         <button
@@ -295,13 +295,13 @@ function EmptyState({ hasSearch, onClearSearch }: EmptyStateProps) {
   if (hasSearch) {
     return (
       <section className="mt-6 rounded-md border border-slate-200 p-6">
-        <p className="text-slate-700">По вашему запросу ничего не найдено.</p>
+        <p className="text-slate-700">No webhooks found for your search.</p>
         <button
           className="mt-3 text-sm font-medium text-sky-700 hover:text-sky-800"
           type="button"
           onClick={onClearSearch}
         >
-          Очистить поиск
+          Clear search
         </button>
       </section>
     );
@@ -309,7 +309,7 @@ function EmptyState({ hasSearch, onClearSearch }: EmptyStateProps) {
 
   return (
     <section className="mt-6 rounded-md border border-slate-200 p-6">
-      <p className="text-slate-700">Webhooks пока нет.</p>
+      <p className="text-slate-700">No webhooks yet.</p>
     </section>
   );
 }

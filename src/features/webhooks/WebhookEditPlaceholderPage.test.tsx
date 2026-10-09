@@ -54,7 +54,7 @@ describe("WebhookEditPage", () => {
 
     renderPage();
 
-    expect(screen.getByRole("status").textContent).toBe("Загружаем webhook…");
+    expect(screen.getByRole("status").textContent).toBe("Loading webhook…");
   });
 
   it("shows an error when the webhook cannot be loaded", async () => {
@@ -63,9 +63,7 @@ describe("WebhookEditPage", () => {
     renderPage();
 
     expect(
-      await screen.findByText(
-        "Не удалось загрузить webhook. Попробуйте ещё раз.",
-      ),
+      await screen.findByText("Unable to load webhook. Please try again."),
     ).toBeTruthy();
   });
 
@@ -95,7 +93,7 @@ describe("WebhookEditPage", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
-    expect(await screen.findByText("Введите название.")).toBeTruthy();
+    expect(await screen.findByText("Enter a name.")).toBeTruthy();
     expect(apiMocks.updateWebhook).not.toHaveBeenCalled();
   });
 
@@ -150,9 +148,7 @@ describe("WebhookEditPage", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Save" }));
 
     expect(
-      await screen.findByText(
-        "Не удалось сохранить webhook. Попробуйте ещё раз.",
-      ),
+      await screen.findByText("Unable to save webhook. Please try again."),
     ).toBeTruthy();
   });
 

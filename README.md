@@ -81,3 +81,104 @@ The test suite uses Vitest and React Testing Library. It covers authentication U
 - Feature UI and TanStack Query state live under `src/features`.
 - MSW handlers and in-memory mock state live under `src/mocks`.
 - The implementation stays intentionally small: no extra component library, global state layer, or backend is required for this task.
+
+## Production QA Checklist
+
+Production URL: https://smart-sender-test-task.vercel.app/
+
+### 1. Application Startup
+
+- [ ] Production URL opens without 404/500 errors or a blank screen.
+- [ ] Login page renders correctly.
+- [ ] All UI text is in English.
+- [ ] Browser Console has no unexpected JavaScript errors.
+- [ ] Network has no unexpected JS/CSS or MSW worker loading errors.
+
+### 2. Login
+
+- [ ] Empty fields show required validation.
+- [ ] Invalid email shows validation.
+- [ ] Incorrect credentials show an authentication error.
+- [ ] Valid credentials successfully authenticate.
+- [ ] Successful login redirects to Webhooks.
+- [ ] Repeated clicks during loading do not create duplicate requests.
+
+### 3. Protected Routes
+
+- [ ] Direct unauthenticated access to Webhooks redirects to Login.
+- [ ] Direct unauthenticated access to an existing Webhook Edit URL redirects to Login.
+- [ ] Authenticated users can access protected pages.
+- [ ] Client-side navigation preserves the session.
+- [ ] Full page reload clears the in-memory session and requires login again.
+
+### 4. Webhooks List
+
+- [ ] Webhooks load successfully.
+- [ ] Loading finishes correctly.
+- [ ] Webhook names, URLs, and other implemented fields render correctly.
+- [ ] First page contains no more than 10 items.
+- [ ] Next and Previous pagination work.
+- [ ] Next is disabled on the last page.
+- [ ] Switching pages shows the correct data.
+
+### 5. Search and URL State
+
+- [ ] Searching an existing webhook returns matching results.
+- [ ] Searching a nonexistent webhook shows the empty state.
+- [ ] Clearing search restores the list.
+- [ ] Search uses approximately 300 ms debounce.
+- [ ] Changing search resets pagination to page 1.
+- [ ] Search and page parameters are reflected in the URL.
+- [ ] Browser Back/Forward restores search and pagination.
+- [ ] Returning from Edit preserves search and page.
+
+### 6. Webhook Editing
+
+- [ ] Edit opens the selected webhook.
+- [ ] Name and URL are prefilled.
+- [ ] Empty Name shows validation.
+- [ ] Invalid URL shows validation.
+- [ ] Unsupported URL protocols are rejected.
+- [ ] Valid HTTP/HTTPS URLs are accepted.
+- [ ] Cancel returns without saving.
+- [ ] Save succeeds with valid data.
+- [ ] Updated data appears in the list.
+- [ ] Reopening Edit shows saved data.
+- [ ] Search and page context are preserved after returning.
+
+### 7. Logout
+
+- [ ] Logout redirects to Login.
+- [ ] Protected routes are inaccessible after logout.
+- [ ] Token revocation request is sent.
+- [ ] Previous user data is not exposed from the query cache.
+- [ ] Login works again without reloading the application.
+- [ ] Webhooks reload after logging in again.
+
+### 8. Security and API
+
+- [ ] Login sends `/auth/login`.
+- [ ] Login includes the required captcha token and fingerprint.
+- [ ] Session issuance uses `/auth/token/issue`.
+- [ ] Protected requests use the active server-side mock session and include `X-Requested-With`.
+- [ ] POST/PUT requests include `X-Requested-With` and `X-CSRF-TOKEN`.
+- [ ] CSRF token is requested when required.
+- [ ] `device_session_token` is absent from Local Storage, Session Storage, and cookies.
+- [ ] Passwords and tokens are not logged to Console.
+
+### 9. Production and Responsive UI
+
+- [ ] SPA routes behave correctly after browser refresh.
+- [ ] Mobile layout has no unwanted horizontal scrolling or clipped controls.
+- [ ] Login, List, and Edit remain usable on narrow screens.
+- [ ] Controls are keyboard accessible.
+- [ ] Loading, empty, and validation states render correctly.
+- [ ] No unexpected 404/500, CORS, or service worker errors.
+
+### Testing Notes
+
+- Demo credentials are already documented earlier in this README.
+- MSW uses mock data; changes may reset after a full reload.
+- In-memory session tokens do not survive a full page reload.
+- 401 rotation, 419 retry, and single-flight behavior are primarily covered by automated tests.
+- Error and retry states can be inspected using browser DevTools.

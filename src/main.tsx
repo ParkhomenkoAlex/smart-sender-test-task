@@ -6,12 +6,22 @@ import "./index.css";
 import App from "./app/App.tsx";
 import { queryClient } from "./app/queryClient.ts";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    </BrowserRouter>
-  </StrictMode>,
-);
+async function bootstrap() {
+  const { worker } = await import("./mocks/browser.ts");
+
+  await worker.start({
+    onUnhandledFrame: "bypass",
+  });
+
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </BrowserRouter>
+    </StrictMode>,
+  );
+}
+
+void bootstrap();

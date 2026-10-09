@@ -1,4 +1,5 @@
 const sessionLifetimeMs = 30_000;
+const fixedCsrfToken = "mock-csrf-token";
 
 type DeviceSession = {
   fingerprint: string;
@@ -11,11 +12,7 @@ let csrfToken: string | undefined;
 let tokenSequence = 0;
 
 export function issueCsrfToken() {
-  const bytes = crypto.getRandomValues(new Uint8Array(16));
-
-  csrfToken = Array.from(bytes, (byte) =>
-    byte.toString(16).padStart(2, "0"),
-  ).join("");
+  csrfToken = fixedCsrfToken;
 
   return csrfToken;
 }

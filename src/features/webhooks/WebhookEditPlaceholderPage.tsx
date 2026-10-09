@@ -8,13 +8,13 @@ import { getWebhook, updateWebhook } from "../../api/webhooks";
 import type { UpdateWebhookInput, Webhook } from "../../api/types";
 
 const webhookSchema = z.object({
-  name: z.string().trim().min(1, "Введите название."),
+  name: z.string().trim().min(1, "Enter a name."),
   url: z
     .string()
     .trim()
-    .min(1, "Введите URL.")
-    .url("Введите корректный URL.")
-    .refine(isHttpUrl, "Введите корректный HTTP/HTTPS URL."),
+    .min(1, "Enter a URL.")
+    .url("Enter a valid URL.")
+    .refine(isHttpUrl, "Enter a valid HTTP/HTTPS URL."),
 });
 
 export function WebhookEditPage() {
@@ -36,7 +36,7 @@ export function WebhookEditPage() {
     return (
       <main className="mx-auto max-w-2xl p-6">
         <p className="text-sm text-slate-600" role="status">
-          Загружаем webhook…
+          Loading webhook…
         </p>
       </main>
     );
@@ -47,7 +47,7 @@ export function WebhookEditPage() {
       <main className="mx-auto max-w-2xl p-6">
         <section className="rounded-md border border-red-200 bg-red-50 p-4">
           <p className="text-sm text-red-800" role="alert">
-            Не удалось загрузить webhook. Попробуйте ещё раз.
+            Unable to load webhook. Please try again.
           </p>
           <button
             className="mt-3 rounded-md border border-red-300 px-3 py-2 text-sm font-medium text-red-800 hover:bg-red-100"
@@ -160,7 +160,7 @@ function WebhookEditForm({ webhook, backTo }: WebhookEditFormProps) {
             type="submit"
             disabled={updateMutation.isPending}
           >
-            {updateMutation.isPending ? "Сохраняем…" : "Save"}
+            {updateMutation.isPending ? "Saving…" : "Save"}
           </button>
           <Link
             className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50"
@@ -182,7 +182,7 @@ function WebhookNotFoundState({ backTo }: { backTo: string }) {
           Webhook not found
         </h1>
         <p className="mt-2 text-sm text-slate-600">
-          Запрошенный webhook не существует.
+          The requested webhook does not exist.
         </p>
       </section>
       <BackToWebhooks to={backTo} />
@@ -226,9 +226,7 @@ function getSaveErrorMessage(error: unknown) {
     return undefined;
   }
 
-  return error
-    ? "Не удалось сохранить webhook. Попробуйте ещё раз."
-    : undefined;
+  return error ? "Unable to save webhook. Please try again." : undefined;
 }
 
 function isNotFoundError(error: unknown) {

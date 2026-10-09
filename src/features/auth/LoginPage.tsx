@@ -8,8 +8,11 @@ import { ApiError } from "../../api/client";
 import { authUserQueryKey } from "./auth-query";
 
 const loginSchema = z.object({
-  email: z.string().min(1, "Введите email.").email("Введите корректный email."),
-  password: z.string().min(1, "Введите пароль."),
+  email: z
+    .string()
+    .min(1, "Enter an email address.")
+    .email("Enter a valid email address."),
+  password: z.string().min(1, "Enter a password."),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -42,7 +45,7 @@ export function LoginPage() {
         <h1 className="text-2xl font-semibold text-slate-900">
           Smart Sender — Webhooks
         </h1>
-        <p className="mt-2 text-sm text-slate-600">Войдите в аккаунт.</p>
+        <p className="mt-2 text-sm text-slate-600">Sign in to your account.</p>
 
         <form
           className="mt-6 space-y-4"
@@ -67,7 +70,7 @@ export function LoginPage() {
           )}
 
           <label className="block text-sm font-medium text-slate-700">
-            Пароль
+            Password
             <input
               className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none focus:border-sky-600 focus:ring-1 focus:ring-sky-600"
               type="password"
@@ -98,7 +101,7 @@ export function LoginPage() {
             type="submit"
             disabled={loginMutation.isPending}
           >
-            {loginMutation.isPending ? "Выполняется вход…" : "Войти"}
+            {loginMutation.isPending ? "Signing in…" : "Sign in"}
           </button>
         </form>
       </section>
@@ -128,10 +131,8 @@ function applyFieldErrors(
 
 function getLoginErrorMessage(error: unknown) {
   if (error instanceof ApiError) {
-    return (
-      error.data?.message ?? "Не удалось выполнить вход. Попробуйте ещё раз."
-    );
+    return error.data?.message ?? "Unable to sign in. Please try again.";
   }
 
-  return "Не удалось выполнить вход. Проверьте подключение к интернету.";
+  return "Unable to sign in. Check your internet connection.";
 }

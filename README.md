@@ -1,73 +1,83 @@
-# React + TypeScript + Vite
+# Smart Sender Test Task
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small React application for authenticating a user, browsing webhooks, and editing webhook endpoints. It uses an in-browser MSW mock API that follows the task contract.
 
-Currently, two official plugins are available:
+**Live Demo:** https://smart-sender-test-task.vercel.app/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Email and password login with protected routes and logout.
+- Server-side webhook search and pagination with URL-synchronised state.
+- Webhook details editing with client- and server-side validation feedback.
+- Session renewal, CSRF handling, loading, empty, error, and retry states.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React and TypeScript
+- Vite and Tailwind CSS
+- React Router
+- TanStack Query
+- React Hook Form and Zod
+- MSW
+- Vitest and React Testing Library
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Prerequisites
 
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+- Node.js
+- pnpm
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Getting Started
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## Demo Credentials
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+- Email: `senior@smart-sender.test`
+- Password: `SmartSender2026!`
 
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+## Available Scripts
+
+| Command             | Description                                       |
+| ------------------- | ------------------------------------------------- |
+| `pnpm dev`          | Start the Vite development server.                |
+| `pnpm build`        | Type-check and build the production bundle.       |
+| `pnpm lint`         | Run ESLint.                                       |
+| `pnpm test`         | Run the Vitest suite.                             |
+| `pnpm preview`      | Preview the production build.                     |
+| `pnpm format`       | Format project files with Prettier.               |
+| `pnpm format:check` | Check formatting with Prettier.                   |
+| `pnpm check`        | Run formatting, linting, tests, and build checks. |
+
+## Authentication and Security
+
+The login flow exchanges credentials for a `device_session_token`, then issues a server-side session and loads the current user. The device session token is kept only in memory; it is not written to `localStorage` or the URL.
+
+A stable 32-character device fingerprint is generated once and stored in `localStorage`. It is included in authentication requests. Session state is held by the mock API, similarly to an HttpOnly-cookie-backed session.
+
+Protected requests that receive `401` share a single token-rotation request, then retry once. A failed rotation or a repeated `401` clears the local session. Logout calls the revoke endpoint and clears the in-memory token and React Query cache.
+
+Before API requests, the client obtains a CSRF token from `GET /csrf`. Every request includes `X-Requested-With: XMLHttpRequest`; `POST` and `PUT` requests also include `X-CSRF-TOKEN`. A `419` response refreshes the token and retries the original request once.
+
+## Webhooks
+
+The webhook list provides server-side name search, a 300 ms debounce, and pagination with 10 records per page. The `search` and `page` parameters are stored in the URL, so direct links and browser Back/Forward navigation restore the list state.
+
+Each row links to an edit page. The edit form supports the contract fields `name` and `url`, validates required values and HTTP/HTTPS URLs, and shows validation errors returned by the API next to the relevant field. Returning to the list preserves its current URL parameters.
+
+## Mock API
+
+MSW runs in the browser and handles authentication, CSRF, user, and webhook endpoints. It provides one fixed demo user and 27 stable webhook records. Sessions, device tokens, and webhook updates are stored in memory only, so reloading the application may require signing in again and resets mock data.
+
+## Testing
+
+The test suite uses Vitest and React Testing Library. It covers authentication UI and route protection, single-flight token rotation, CSRF request and retry behaviour, logout cleanup, webhook list search/pagination/URL state, and webhook editing, validation, save errors, and navigation.
+
+## Architecture Decisions
+
+- API transport is isolated in `src/api`, including CSRF and session-retry behaviour.
+- Feature UI and TanStack Query state live under `src/features`.
+- MSW handlers and in-memory mock state live under `src/mocks`.
+- The implementation stays intentionally small: no extra component library, global state layer, or backend is required for this task.

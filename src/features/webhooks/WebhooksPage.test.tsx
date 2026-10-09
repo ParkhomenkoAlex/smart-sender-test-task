@@ -148,9 +148,9 @@ describe("WebhooksPage", () => {
     renderPage("/webhooks?search=missing");
 
     expect(
-      await screen.findByText("По вашему запросу ничего не найдено."),
+      await screen.findByText("No webhooks found for your search."),
     ).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Очистить поиск" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Clear search" })).toBeTruthy();
   });
 
   it("shows an error and retries the request", async () => {
@@ -161,9 +161,7 @@ describe("WebhooksPage", () => {
     renderPage();
 
     expect(
-      await screen.findByText(
-        "Не удалось загрузить webhooks. Попробуйте ещё раз.",
-      ),
+      await screen.findByText("Unable to load webhooks. Please try again."),
     ).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Retry" }));
 

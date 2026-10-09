@@ -10,7 +10,8 @@
     "test": "vitest run",
     "preview": "vite preview",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "check": "pnpm format:check && pnpm lint && pnpm test && pnpm build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

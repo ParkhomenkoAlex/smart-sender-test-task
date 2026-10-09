@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { hasDeviceSessionToken } from "../api/auth";
 import { LoginPage } from "../features/auth/LoginPage";
 import { ProtectedRoute, PublicOnlyRoute } from "../features/auth/AuthRoute";
-import { WebhookEditPlaceholderPage } from "../features/webhooks/WebhookEditPlaceholderPage";
+import { WebhookEditPage } from "../features/webhooks/WebhookEditPlaceholderPage";
 import { WebhooksPage } from "../features/webhooks/WebhooksPage";
 
 function App() {
@@ -13,7 +13,7 @@ function App() {
       </Route>
       <Route element={<ProtectedRoute />}>
         <Route path="/webhooks" element={<WebhooksPage />} />
-        <Route path="/webhooks/:id" element={<WebhookEditPlaceholderPage />} />
+        <Route path="/webhooks/:id" element={<WebhookEditPage />} />
       </Route>
       <Route
         path="/"

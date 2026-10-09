@@ -1,12 +1,18 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { logout } from "../../api/auth";
 import { getWebhooks } from "../../api/webhooks";
 import type { Webhook } from "../../api/types";
 
 export function WebhooksPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const urlSearch = searchParams.get("search") ?? "";
   const page = getPage(searchParams.get("page"));
@@ -116,7 +122,10 @@ export function WebhooksPage() {
         page <= webhooksQuery.data.paging.pages.last &&
         (webhooksQuery.data.data.length > 0 ? (
           <>
-            <WebhookTable webhooks={webhooksQuery.data.data} />
+            <WebhookTable
+              webhooks={webhooksQuery.data.data}
+              listSearch={location.search}
+            />
             <Pagination
               currentPage={webhooksQuery.data.paging.pages.current}
               lastPage={webhooksQuery.data.paging.pages.last}
@@ -177,9 +186,10 @@ function WebhookSearch({ search, onSearchChange }: WebhookSearchProps) {
 
 type WebhookTableProps = {
   webhooks: Webhook[];
+  listSearch: string;
 };
 
-function WebhookTable({ webhooks }: WebhookTableProps) {
+function WebhookTable({ webhooks, listSearch }: WebhookTableProps) {
   return (
     <div className="mt-6 overflow-x-auto rounded-lg border border-slate-200">
       <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
@@ -220,7 +230,7 @@ function WebhookTable({ webhooks }: WebhookTableProps) {
               <td className="px-4 py-3">
                 <Link
                   className="font-medium text-sky-700 hover:text-sky-800"
-                  to={`/webhooks/${webhook.id}`}
+                  to={`/webhooks/${webhook.id}${listSearch}`}
                 >
                   Edit
                 </Link>
